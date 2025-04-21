@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Linhas e Moedas</title>
+    <link rel="icon" type="image/x-icon" href="https://via.placeholder.com/32?text=Nota">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700&family=Helvetica+Neue:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            user-select: none;
+            position: relative;
+            background: #0a0a0a;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.6;
+        }
+        .ebook-container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 3rem auto;
+            background: #121212;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        .page {
+            display: none;
+            min-height: 800px;
+            padding: 2rem;
+            background: #1e1e1e;
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
+            color: #f8f8f8;
+        }
+        .page.active {
+            display: block;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding: 0 1rem;
+            flex-direction: row;
+        }
+        .login-container {
+            max-width: 500px;
+            width: 90%;
+            margin: 8rem auto;
+            background: rgba(10, 31, 26, 0.97);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+            text-align: center;
+            color: #b8975b;
+            position: relative;
+            z-index: 1;
+        }
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border: 3px solid #b8975b;
+            border-radius: 10px;
+            background: #1a1a1a;
+            color: #f8f8f8;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .input-field:focus {
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+            outline: none;
+        }
+        .btn {
+            padding: 1rem 2.5rem;
+            background: #0a1f1a;
+            color: #f8f8f8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover {
+            background: #12332b;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(18, 51, 43, 0.6);
+        }
+        .download-btn {
+            display: block;
+            padding: 1.5rem 3rem;
+            background: #0a1f1a;
+            color: #f8f8f8;
+            border: 2px solid #b8975b;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 2rem auto;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .download-btn:hover {
+            background: #12332b;
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(18, 51, 43, 0.6);
+        }
+        .chapter-video {
+            width: 100%;
+            max-width: 400px;
+            margin: 1rem auto;
+            border: 2px solid #b8975b;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            display: block;
+        }
+        h1, h2, h3, p, li, td, th, a {
+            color: #f8f8f8;
+        }
+        h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            font-family: 'EB Garamond', serif;
+            font-size: 2rem;
+            margin-top: 2rem;
+        }
+        h3 {
+            font-size: 1.4rem;
+            margin-top: 1.5rem;
+        }
+        p, li, td {
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: #1e1e1e;
+        }
+        th, td {
+            border: 2px solid #b8975b;
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background: #0a1f1a;
+        }
+        .divider {
+            border-top: 5px solid #b8975b;
+            margin: 2.5rem 0;
+        }
+        .quote {
+            border-left: 8px solid #0a1f1a;
+            padding-left: 1.5rem;
+            margin: 2rem 0;
+            color: #e0e0e0;
+            font-style: italic;
+            background: #2a2a2a;
+            padding: 1.2rem;
+            border-radius: 6px;
+        }
+        .cover {
+            background: url('https://via.placeholder.com/1000x800?text=Capa+Nota+Metálica+Escura') no-repeat center;
+            background-size: cover;
+            height: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #f8f8f8;
+            text-shadow: 0 5px 10px rgba(0,0,0,0.9);
+            border-radius: 12px;
+            position: relative;
+        }
+        .cover h1, .cover p {
+            position: relative;
+            z-index: 1;
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .error-message.show {
+            opacity: 1;
+        }
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        a:hover {
+            color: #b8975b;
+            text-decoration: underline;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #0a1f1a;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            color: #f8f8f8;
+            border: 2px solid #b8975b;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.7);
+        }
+        .modal-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .modal-content p {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .modal-content .btn {
+            padding: 0.8rem 2rem;
+        }
+        @media (max-width: 768px) {
+            .ebook-container {
+                margin: 2rem auto;
+                padding: 1.5rem;
+            }
+            .page {
+                min-height: 600px;
+                padding: 1.5rem;
+            }
+            .login-container {
+                margin: 5rem auto;
+                padding: 2rem;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            h2 {
+                font-size: 1.8rem;
+            }
+            h3 {
+                font-size: 1.2rem;
+            }
+            p, li, td {
+                font-size: 0.9rem;
+            }
+            .input-field {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+            .btn {
+                padding: 0.8rem 2rem;
+                font-size: 0.9rem;
+            }
+            .download-btn {
+                padding: 1.2rem 2rem;
+                font-size: 1rem;
+            }
+            .nav-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .cover {
+                height: 600px;
+            }
+            .cover h1 {
+                font-size: 2.5rem;
+            }
+            .cover p {
+                font-size: 1.2rem;
+            }
+            .login-container h1 {
+                font-size: 3.5rem;
+            }
+            .login-container p {
+                font-size: 1.1rem;
+            }
+            .modal-content {
+                padding: 1.5rem;
+            }
+            .modal-content h2 {
+                font-size: 1.8rem;
+            }
+            .modal-content p {
+                font-size: 0.9rem;
+            }
+            .chapter-video {
+                max-width: 350px;
+            }
+        }
+        @media (max-width: 480px) {
+            .ebook-container {
+                margin: 1.5rem auto;
+                padding: 1rem;
+            }
+            .page {
+                min-height: 500px;
+                padding: 1rem;
+            }
+            .login-container {
+                margin: 3rem auto;
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            h3 {
+                font-size: 1.1rem;
+            }
+            p, li, td {
+                font-size: 0.85rem;
+            }
+            .input-field {
+                padding: 0.7rem;
+                font-size: 0.85rem;
+            }
+            .btn {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.85rem;
+            }
+            .download-btn {
+                padding: 1rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            .cover {
+                height: 500px;
+            }
+            .cover h1 {
+                font-size: 2rem;
+            }
+            .cover p {
+                font-size: 1rem;
+            }
+            .login-container h1 {
+                font-size: 2.5rem;
+            }
+            .login-container p {
+                font-size: 1rem;
+            }
+            .modal-content {
+                padding: 1rem;
+            }
+            .modal-content h2 {
+                font-size: 1.5rem;
+            }
+            .modal-content p {
+                font-size: 0.85rem;
+            }
+            .chapter-video {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <video id="background-video" autoplay muted loop playsinline preload="auto">
+        <source src="https://i.imgur.com/lkt1IJu.mp4" type="video/mp4">
+        Desculpe, seu navegador não suporta vídeos.
+    </video>
+
+    <div id="login" class="login-container">
+        <h1 class="text-5xl font-bold mb-8">Acesse o Linhas e Moedas</h1>
+        <p class="mb-6 text-xl">Insira sua senha única para desbloquear o <em>Linhas e Moedas</em>, um guia de elite para técnicas de impressão e fabricação.</p>
+        <input type="password" id="password" class="input-field" placeholder="Digite sua senha">
+        <button onclick="validateLogin()" class="btn">Desbloquear eBook</button>
+        <p id="error" class="error-message">Senha inválida. Tente novamente.</p>
+    </div>
+
+    <div id="welcome-modal" class="modal">
+        <div class="modal-content">
+            <h2>Bem-vindo ao Linhas e Moedas!</h2>
+            <p>Você desbloqueou o <em>Linhas e Moedas</em>. Prepare-se para uma jornada técnica de precisão e excelência!</p>
+            <button onclick="closeModal()" class="btn">Continuar</button>
+        </div>
+    </div>
+
+    <div id="ebook" class="ebook-container hidden">
+        <div class="particles" id="particles"></div>
+        <div id="page-1" class="page cover active">
+            <div>
+                <h1 class="text-7xl font-bold">Linhas e Moedas</h1>
+                <p class="text-4xl mt-8">Um Guia Exclusivo para Técnicas de Impressão e Fabricação</p>
+                <p class="text-2xl mt-6">O Zelador</p>
+                <p class="text-lg mt-4">1ª Edição, Abril 2025</p>
+            </div>
+        </div>
+
+        <div id="page-2" class="page">
+            <h2>Página de Direitos Autorais</h2>
+            <p class="divider"></p>
+            <p>© 2025 O Zelador. Todos os direitos reservados.</p>
+            <p>Nenhuma parte deste eBook pode ser reproduzida ou transmitida sem permissão por escrito do autor, exceto para breves citações em resenhas críticas.</p>
+            <p><strong>Aviso Legal</strong>: Este manual é um exercício teórico de organização de técnicas de impressão e design. A falsificação de moeda é uma atividade ilegal em muitos países, incluindo o Brasil, e pode resultar em sérias consequências legais. Este conteúdo não incentiva práticas ilícitas.</p>
+            <p class="divider"></p>
+            <p><strong>ISBN</strong>: 978-1-234567-89-0 (Placeholder)</p>
+            <p><strong>Publicado por</strong>: O Zelador</p>
+        </div>
+
+        <div id="page-3" class="page">
+            <h2>Dedicatória</h2>
+            <p class="divider"></p>
+            <p>Para os aprendizes dedicados que buscam excelência técnica com paciência e compromisso.</p>
+            <p class="divider"></p>
+            <h2>Prefácio</h2>
+            <p>Bem-vindo ao <em>Linhas e Moedas</em>, um guia projetado para entusiastas e profissionais que desejam explorar técnicas sofisticadas de impressão e acabamento. Este eBook não é para os preguiçosos. Como enfatizado, <em>“Para aqueles que querem mesmo aprender, é preciso ler tudo isso com atenção. Preguiça não vai fazer você ter esse conhecimento.”</em> Aqui, você encontrará instruções detalhadas, dicas práticas e recursos exclusivos, incluindo vídeos e projetos, para dominar cada etapa do processo.</p>
+            <p>Prepare-se para uma jornada técnica que exige precisão, prática e dedicação.</p>
+        </div>
+
+        <div id="page-4" class="page">
+            <h2>Sumário</h2>
+            <p class="divider"></p>
+            <ul class="list-disc pl-8">
+                <li><a href="#" onclick="goToPage(5)">Introdução: O Caminho para a Excelência Técnica</a></li>
+                <li><a href="#" onclick="goToPage(6)">Capítulo 1: Seleção de Materiais</a></li>
+                <li><a href="#" onclick="goToPage(7)">Capítulo 2: Equipamentos de Impressão</a></li>
+                <li><a href="#" onclick="goToPage(8)">Capítulo 3: Técnicas de Acabamento Avançadas</a></li>
+                <li><a href="#" onclick="goToPage(9)">Capítulo 4: Simulação de Elementos de Segurança</a></li>
+                <li><a href="#" onclick="goToPage(10)">Capítulo 5: Especificações Técnicas e Projetos</a></li>
+                <li><a href="#" onclick="goToPage(11)">Capítulo 6: Estratégias Operacionais e Precauções</a></li>
+                <li><a href="#" onclick="goToPage(12)">Conclusão: Aperfeiçoamento Contínuo</a></li>
+                <li><a href="#" onclick="goToPage(13)">Apêndice: Recursos e Ferramentas Recomendadas</a></li>
+                <li><a href="#" onclick="goToPage(14)">Recursos para Download</a></li>
+                <li><a href="#" onclick="goToPage(15)">Sobre o Autor</a></li>
+            </ul>
+        </div>
+
+        <div id="page-5" class="page">
+            <h2>Introdução: O Caminho para a Excelência Técnica</h2>
+            <p class="divider"></p>
+            <p>Dominar a criação de réplicas de notas exige comprometimento e estudo meticuloso. Este manual foi projetado para guiar você por cada etapa do processo, desde a escolha de materiais até a aplicação de detalhes de segurança. Com uma abordagem prática e estruturada, você aprenderá técnicas que demandam precisão e paciência. <em>“Deixe de preguiça de ler e vamos para o tutorial.”</em></p>
+            <h3>Objetivos do Manual</h3>
+            <ul class="list-disc pl-8">
+                <li>Fornecer instruções detalhadas para seleção de materiais e equipamentos.</li>
+                <li>Ensinar técnicas de acabamento que conferem realismo às réplicas.</li>
+                <li>Apresentar métodos para simular elementos de segurança.</li>
+                <li>Oferecer estratégias práticas e precauções para aplicação do conhecimento.</li>
+            </ul>
+        </div>
+
+        <div id="page-6" class="page">
+            <h2>Capítulo 1: Seleção de Materiais</h2>
+            <p class="divider"></p>
+            <h3>O Papel Ideal</h3>
+            <p>O papel-moeda não é fabricado com fibras de madeira, tornando papéis convencionais inadequados. <em>“Nenhum papel é 100% parecido com o moeda.”</em> O <strong>papel vergê</strong> (gramatura 120g) é a escolha ideal devido à sua textura única. Alternativas incluem <strong>papel verbe</strong> ou <strong>papel fiduciário</strong>, disponíveis em mercados especializados.</p>
+            <h4>Especificações</h4>
+            <table>
+                <tr><th>Atributo</th><th>Descrição</th></tr>
+                <tr><td>Gramatura</td><td>120g, para equilíbrio entre resistência e textura</td></tr>
+                <tr><td>Textura</td><td>Superfície texturizada para toque autêntico</td></tr>
+                <tr><td>Fornecedores</td><td>Distribuidores especializados ou deep web</td></tr>
+            </table>
+            <p class="quote">Teste amostras de papel antes da impressão em larga escala para garantir compatibilidade com a impressora e os acabamentos desejados.</p>
+        </div>
+
+        <div id="page-7" class="page">
+            <h2>Capítulo 2: Equipamentos de Impressão</h2>
+            <p class="divider"></p>
+            <h3>A Impressora Recomendada</h3>
+            <p>A escolha do equipamento é crucial. <em>“Eu uso uma impressora HP Multifuncional LaserJet Pro 100 M175nw, ela é perfeita porque a tinta não se solta facilmente.”</em> Impressoras a laser são preferidas devido à durabilidade do toner.</p>
+            <h4>Características da Impressora</h4>
+            <table>
+                <tr><th>Característica</th><th>Especificação</th></tr>
+                <tr><td>Modelo</td><td>HP LaserJet Pro 100 M175nw ou similar</td></tr>
+                <tr><td>Tecnologia</td><td>Impressão a laser para fixação superior</td></tr>
+                <tr><td>Resolução</td><td>Mínimo de 600 DPI para detalhes nítidos</td></tr>
+            </table>
+            <h4>Cuidados Operacionais</h4>
+            <ol class="list-decimal pl-8">
+                <li>Calibre a impressora para cores precisas usando perfis ICC.</li>
+                <li>Use toners originais ou de alta qualidade para evitar desbotamento.</li>
+                <li>Realize manutenção regular para garantir consistência.</li>
+            </ol>
+        </div>
+
+        <div id="page-8" class="page">
+            <h2>Capítulo 3: Técnicas de Acabamento Avançadas</h2>
+            <p class="divider"></p>
+            <h3>Anti-Caneta Mágica e Textura</h3>
+            <p>Para evitar detecção por canetas verificadoras: <em>“Pegue shampoo, polvilho, água e cola, misture tudo e coloque polvilho até ficar meio grosso. Com um pincel, você vai passando na nota.”</em></p>
+            <h4>Receita</h4>
+            <ul class="list-disc pl-8">
+                <li><strong>Ingredientes</strong>: Shampoo, polvilho antisséptico, água, cola branca.</li>
+                <li><strong>Consistência</strong>: Mistura espessa, aplicável com pincel.</li>
+                <li><strong>Aplicação</strong>: Passe uniformemente e deixe secar ao ar livre.</li>
+            </ul>
+            <p><strong>Resultado</strong>: A nota ficará áspera e resistente à caneta mágica, desde que o toner seja de alta fixação.</p>
+            <div class="chapter-video">
+                <div style="position:relative; width:100%; height:0px; padding-bottom:56.25%">
+                    <iframe allow="fullscreen;autoplay;sound" allowfullscreen height="100%" src="https://streamable.com/e/uaasx9?autoplay=1&loop=0" width="100%" style="border:none; width:100%; height:100%; position:absolute; left:0px; top:0px; overflow:hidden;"></iframe>
+                </div>
+            </div>
+            <h3>Envelhecimento da Impressão</h3>
+            <p><em>“Pegue um caderno ou livro, coloque pó de café e a nota, e deixe por um tempo que logo ela estará mais escura.”</em></p>
+            <h4>Procedimento</h4>
+            <ol class="list-decimal pl-8">
+                <li>Espalhe pó de café sobre a nota.</li>
+                <li>Coloque-a entre páginas de um livro.</li>
+                <li>Deixe descansar por 2-3 dias.</li>
+            </ol>
+            <h3>Textura e Autenticidade</h3>
+            <p><em>“Amassa ela, pisa dela e deixa junto com umas verdadeiras, e logo ela ficará com textura e cheiro da verdadeira.”</em></p>
+            <h4>Métodos Alternativos</h4>
+            <ul class="list-disc pl-8">
+                <li><strong>Aspereza</strong>: Combine <strong>amaciante e bicarbonato de sódio</strong> ou <strong>farinha de milho, água e cola</strong>, aplicando e secando ao sol.</li>
+                <li><strong>Suavização</strong>: Use a parte sem corte de uma faca para alisar áreas ásperas.</li>
+            </ul>
+        </div>
+
+        <div id="page-9" class="page">
+            <h2>Capítulo 4: Simulação de Elementos de Segurança</h2>
+            <p class="divider"></p>
+            <h3>Contra Luz Negra</h3>
+            <p><em>“Você precisa de alguém que mexa com carimbos de confiança e peça pra fazer um carimbo com o símbolo da nota.”</em></p>
+            <h4>Processo</h4>
+            <ol class="list-decimal pl-8">
+                <li>Contrate um profissional para criar um carimbo com o símbolo desejado.</li>
+                <li>Misture <strong>pó fluorescente de boate</strong> com cola e água.</li>
+                <li>Aplique o carimbo na área específica da nota.</li>
+            </ol>
+            <p class="quote">Teste o carimbo em papel comum sob luz negra antes da aplicação final.</p>
+            <h3>Marca d’Água e Brilho</h3>
+            <p><em>“O brilho é feito com glitter e ferro de passar.”</em></p>
+            <h4>Técnica</h4>
+            <ol class="list-decimal pl-8">
+                <li>Espalhe glitter finamente na área da marca d’água.</li>
+                <li>Use um ferro de passar em temperatura baixa para fixar.</li>
+                <li>Verifique o brilho sob luz natural.</li>
+            </ol>
+            <h3>Faixa de Segurança</h3>
+            <p><em>“Para a listrinha preta, vocês só vão precisar de uma agulha (de preferência fina) e uma linha preta, e uma paciência relativamente boa.”</em></p>
+            <h4>Instruções</h4>
+            <ol class="list-decimal pl-8">
+                <li>Costure a linha preta com uma agulha fina, simulando a faixa.</li>
+                <li>Trabalhe com precisão para evitar rasgos.</li>
+                <li>Teste a resistência da costura.</li>
+            </ol>
+        </div>
+
+        <div id="page-10" class="page">
+            <h2>Capítulo 5: Especificações Técnicas e Projetos</h2>
+            <p class="divider"></p>
+            <h3>Dimensões das Notas</h3>
+            <h4>Família Antiga</h4>
+            <table>
+                <tr><th>Denominação</th><th>Dimensões</th></tr>
+                <tr><td>2 reais</td><td>14,0 x 6,5 cm</td></tr>
+                <tr><td>5 reais</td><td>14,0 x 6,5 cm</td></tr>
+                <tr><td>10 reais</td><td>14,0 x 6,5 cm</td></tr>
+                <tr><td>20 reais</td><td>14,0 x 6,5 cm</td></tr>
+                <tr><td>50 reais</td><td>14,0 x 6,5 cm</td></tr>
+                <tr><td>100 reais</td><td>14,0 x 6,5 cm</td></tr>
+            </table>
+            <h4>Família Nova</h4>
+            <table>
+                <tr><th>Denominação</th><th>Dimensões</th></tr>
+                <tr><td>2 reais</td><td>12,1 x 6,5 cm</td></tr>
+                <tr><td>5 reais</td><td>12,8 x 6,5 cm</td></tr>
+                <tr><td>10 reais</td><td>13,5 x 6,5 cm</td></tr>
+                <tr><td>20 reais</td><td>14,2 x 6,5 cm</td></tr>
+                <tr><td>50 reais</td><td>14,9 x 7,0 cm</td></tr>
+                <tr><td>100 reais</td><td>15,6 x 7,0 cm</td></tr>
+            </table>
+            <h4>Projeto de Impressão</h4>
+            <p><em>“Projeto da fake: https://imgur.com/a/vfp6EGI. Não precisa colar as 2 partes, é só virar a folha e colocar pra imprimir o outro lado.”</em></p>
+            <h4>Instruções</h4>
+            <ol class="list-decimal pl-8">
+                <li>Acesse o projeto base no link fornecido: <a href="https://imgur.com/a/vfp6EGI" target="_blank">https://imgur.com/a/vfp6EGI</a>.</li>
+                <li>Use um editor gráfico (ex.: Adobe Photoshop, GIMP) para ajustar as dimensões.</li>
+                <li>Imprima frente e verso, alinhando cuidadosamente a folha.</li>
+            </ol>
+            <h4>Recursos Complementares</h4>
+            <p>No final deste eBook, você encontrará links para download de todo o material necessário, incluindo vídeos tutoriais detalhando o processo de impressão e acabamento, além de projetos completos de notas em formatos editáveis. Esses recursos foram elaborados para facilitar a prática e garantir resultados precisos.</p>
+            <p class="quote">Realize impressões de teste em papel comum para verificar alinhamento e cores antes de usar o papel vergê.</p>
+        </div>
+
+        <div id="page-11" class="page">
+            <h2>Capítulo 6: Estratégias Operacionais e Precauções</h2>
+            <p class="divider"></p>
+            <h3>Estratégias Práticas</h3>
+            <p><em>“Dicas de como virar as fakes:”</em></p>
+            <ol class="list-decimal pl-8">
+                <li><em>“Vá pra frente de uma casa que não tenha ninguém, peça uma pizza com troco pra 100$, pega o troco e some.”</em></li>
+                <li><em>“Vá nesses barzinhos que têm velhos, sempre passa porque andam todos bêbados.”</em></li>
+                <li><em>“Festas e boates vira muito também.”</em></li>
+                <li><em>“Pegue uns 6k em notas e vá viajar, compre frutas que vendem na rua ou uma coca em pontos de apoio de ônibus, porque com a correria ninguém vê se é falsa ou não.”</em></li>
+            </ol>
+            <p class="quote">Essas estratégias são apresentadas como parte do conteúdo original e devem ser vistas como exemplos teóricos, não recomendações.</p>
+            <h3>Precauções em Caso de Detecção</h3>
+            <p><em>“Precauções caso descubram:”</em></p>
+            <ol class="list-decimal pl-8">
+                <li><em>“Fale: ‘Eu não sabia que era falsa, peguei de troco do mercado’ (saia rápido!).”</em></li>
+                <li><em>“Diga que foi comprar algo para um amigo distante. Se insistirem, leve a qualquer lugar e diga que ele foi embora.”</em></li>
+                <li><em>“Fale que achou o dinheiro na rua.”</em></li>
+                <li><em>“Diga que comprou uma pizza e pediu troco pra 100, e te deram essa nota sem você saber.”</em></li>
+                <li><em>“Insista que a nota é verdadeira. Se não acreditarem, mostre surpresa: ‘Como eu iria saber?’”</em></li>
+            </ol>
+            <p class="quote">Mantenha a calma e evite confrontos para proteger sua segurança.</p>
+        </div>
+
+        <div id="page-12" class="page">
+            <h2>Conclusão: Aperfeiçoamento Contínuo</h2>
+            <p class="divider"></p>
+            <p><em>“Não vou dar ideia do trampo todo, até porque as partes mais difíceis eu coloquei aqui mostrando como ser, mas tem nego que quer tudo mastigado.”</em> Este manual fornece as ferramentas e técnicas essenciais para criar réplicas de alta qualidade, mas o domínio depende de prática e refinamento. Continue testando, ajustando e aprimorando suas habilidades para alcançar a excelência.</p>
+        </div>
+
+        <div id="page-13" class="page">
+            <h2>Apêndice: Recursos e Ferramentas Recomendadas</h2>
+            <p class="divider"></p>
+            <h3>Materiais</h3>
+            <ul class="list-disc pl-8">
+                <li><strong>Papel</strong>: Vergê 120g, verbe ou fiduciário.</li>
+                <li><strong>Tinta</strong>: Toners de alta fixação para impressoras a laser.</li>
+                <li><strong>Aditivos</strong>: Glitter, pó fluorescente, polvilho, cola branca.</li>
+            </ul>
+            <h3>Ferramentas</h3>
+            <ul class="list-disc pl-8">
+                <li><strong>Softwares</strong>: Adobe Photoshop, GIMP, Affinity Designer, Corel Draw.</li>
+                <li><strong>Equipamentos</strong>: Impressora a laser, ferro de passar, agulha fina.</li>
+            </ul>
+            <h3>Recursos Online</h3>
+            <ul class="list-disc pl-8">
+                <li><strong>Projeto base</strong>: <a href="https://imgur.com/a/vfp6EGI" target="_blank">https://imgur.com/a/vfp6EGI</a></li>
+                <li><strong>Materiais complementares</strong>: Links para download de vídeos e projetos, disponíveis na seção seguinte.</li>
+                <li><strong>Tutoriais</strong>: Pesquise guias sobre glitter ou carimbos fluorescentes.</li>
+            </ul>
+        </div>
+
+        <div id="page-14" class="page">
+            <h2>Recursos para Download</h2>
+            <p class="divider"></p>
+            <p>Os seguintes materiais estão disponíveis para download através de links seguros:</p>
+            <ul class="list-disc pl-8">
+                <li><strong>Vídeos Tutoriais</strong>: Demonstrações passo a passo de impressão, acabamentos e elementos de segurança (formato MP4, duração média de 5-10 minutos por vídeo).</li>
+                <li><strong>Projetos de Notas</strong>: Arquivos editáveis em alta resolução (formatos PSD, PNG, CDR) para impressão frente e verso.</li>
+                <li><strong>Guia de Materiais</strong>: Lista detalhada de fornecedores recomendados para papel vergê, toners e aditivos.</li>
+            </ul>
+            <p><strong>Acesso</strong>: Os links estão em uma seção protegida por senha, fornecida aos leitores que adquirirem o eBook. Armazene os arquivos em um local seguro.</p>
+            <p><strong>Instruções</strong>: Use um visualizador de PDF com suporte a hyperlinks (ex.: Adobe Acrobat) para acessar os links. Para projetos, recomendamos softwares como Photoshop, GIMP ou Corel Draw.</p>
+            <a href="https://drive.google.com/file/d/15JCBnxyB21-eKuCj_4cKkADP7Lddn-82/view?usp=drive_link" target="_blank" class="download-btn">Baixar Materiais, Imagens e Projetos (Corel Draw)</a>
+        </div>
+
+        <div id="page-15" class="page">
+            <h2>Sobre o Autor</h2>
+            <p class="divider"></p>
+            <p>O Zelador é um especialista em técnicas avançadas de impressão e acabamento, com anos de experiência em manipulação de materiais e design gráfico. Este manual reflete seu compromisso em compartilhar conhecimento técnico de forma clara e profissional, voltado para aprendizes dedicados que buscam excelência.</p>
+            <p><strong></strong>:</p>
+            <p><strong>Agradecimentos</strong>: Aos leitores que abraçam o desafio de aprender com dedicação.</p>
+            <p class="divider"></p>
+            <p><strong>Fim do Linhas e Moedas</strong></p>
+        </div>
+
+        <div class="nav-buttons">
+            <button onclick="prevPage()" class="btn">Página Anterior</button>
+            <button onclick="nextPage()" class="btn">Próxima Página</button>
+        </div>
+    </div>
+
+    <audio id="page-flip-sound" src="https://via.placeholder.com/paper-flip.mp3" preload="auto"></audio>
+
+    <script>
+        // Lista de senhas (20 senhas aleatórias)
+        const passwords = [
+            "NotaElite01", "ImpressaoLux02", "VergêPremium03", "TintaPro04", "BrilhoSeguro05",
+            "CarimboMax06", "TexturaElite07", "MoedaLux08", "LaserPro09", "GlitterMax10",
+            "FaixaElite11", "DinheiroPro12", "FabricaLux13", "NotaSegura14", "SegurançaMax15",
+            "ImprimirElite16", "TécnicaPro17", "RealismoLux18", "ManufaturaPro19", "PremiumElite20"
+        ];
+
+        // Validação do login
+        function validateLogin() {
+            const password = document.getElementById('password').value;
+            const error = document.getElementById('error');
+            if (passwords.includes(password)) {
+                const video = document.getElementById('background-video');
+                gsap.to('#login', { 
+                    opacity: 0, 
+                    y: -50, 
+                    duration: 0.6, 
+                    onComplete: () => {
+                        document.getElementById('login').classList.add('hidden');
+                        video.remove(); // Destroi o vídeo
+                        document.getElementById('ebook').classList.remove('hidden');
+                        showWelcomeModal();
+                        gsap.to('#ebook', { opacity: 1, y: 0, duration: 0.6 });
+                        animateCover();
+                    }
+                });
+            } else {
+                error.classList.add('show');
+                gsap.fromTo('#error', { y: -10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4 });
+            }
+        }
+
+        // Modal de boas-vindas
+        function showWelcomeModal() {
+            const modal = document.getElementById('welcome-modal');
+            modal.style.display = 'flex';
+            gsap.fromTo('.modal-content', 
+                { opacity: 0, y: 50 }, 
+                { opacity: 1, y: 0, duration: 0.6 }
+            );
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('welcome-modal');
+            gsap.to('.modal-content', {
+                opacity: 0,
+                y: 50,
+                duration: 0.4,
+                onComplete: () => {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('welcome-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('welcome-modal')) {
+                closeModal();
+            }
+        });
+
+        // Segurança: Bloqueio de botão direito, atalhos e seleção
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 'i' || e.key === 'I') || e.key === 'F12') {
+                e.preventDefault();
+            }
+        });
+        document.addEventListener('selectstart', e => e.preventDefault());
+
+        // Navegação de páginas
+        let currentPage = 1;
+        const totalPages = 15;
+
+        function showPage(pageNum) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const newPage = document.getElementById(`page-${pageNum}`);
+            newPage.classList.add('active');
+            gsap.fromTo(newPage, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 0.6 });
+            currentPage = pageNum;
+            newPage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            playPageFlipSound();
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
+            }
+        }
+
+        function goToPage(pageNum) {
+            if (pageNum >= 1 && pageNum <= totalPages) {
+                showPage(pageNum);
+            }
+        }
+
+        // Som ao virar página
+        function playPageFlipSound() {
+            const audio = document.getElementById('page-flip-sound');
+            audio.currentTime = 0;
+            audio.volume = 0.5;
+            audio.play().catch(() => {
+                console.log('Reprodução de áudio bloqueada.');
+            });
+        }
+
+        // Animações iniciais do login
+        gsap.from('.login-container', { opacity: 0, y: 100, duration: 1.2, delay: 0.5 });
+        gsap.from('.input-field', { opacity: 0, x: -50, duration: 1, delay: 0.7 });
+        gsap.from('.btn', { opacity: 0, x: 50, duration: 1, delay: 0.9 });
+
+        // Animação de prensa na capa
+        function animateCover() {
+            const cover = document.querySelector('#page-1');
+            const title = cover.querySelector('h1');
+            const subtitle = cover.querySelectorAll('p');
+            gsap.from(title, {
+                scale: 1.2,
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.out',
+                textShadow: '0 0 10px #b8975b'
+            });
+            gsap.from(subtitle, {
+                scale: 1.2,
+                opacity: 0,
+                duration: 1,
+                delay: 0.3,
+                ease: 'power2.out',
+                stagger: 0.2
+            });
+        }
+
+        // Partículas douradas no fundo (após login)
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            particlesContainer.innerHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '5px';
+                particle.style.height = '5px';
+                particle.style.background = '#b8975b';
+                particle.style.borderRadius = '50%';
+                particle.style.opacity = Math.random() * 0.4 + 0.2;
+                particlesContainer.appendChild(particle);
+                gsap.to(particle, {
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * 800,
+                    duration: 6 + Math.random() * 6,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'sine.inOut'
+                });
+            }
+        }
+        createParticles();
+
+        // Ajustar partículas ao redimensionar a janela
+        window.addEventListener('resize', createParticles);
+
+        // Inicializar vídeo de fundo
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('background-video');
+            video.play().catch(() => {
+                console.log('Autoplay bloqueado, vídeo iniciará manualmente.');
+            });
+        });
+    </script>
+</body>
+</html>
