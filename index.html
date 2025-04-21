@@ -524,7 +524,7 @@
             <p><strong>Resultado</strong>: A nota ficará áspera e resistente à caneta mágica, desde que o toner seja de alta fixação.</p>
             <div class="chapter-video">
                 <div style="position:relative; width:100%; height:0px; padding-bottom:56.25%">
-                    <iframe allow="fullscreen;autoplay;sound" allowfullscreen height="100%" src="https://streamable.com/e/uaasx9?autoplay=1&loop=0" width="100%" style="border:none; width:100%; height:100%; position:absolute; left:0px; top:0px; overflow:hidden;"></iframe>
+                    <iframe id="chapter-video-iframe" allow="fullscreen;autoplay;sound" allowfullscreen height="100%" src="https://streamable.com/e/uaasx9?loop=0" width="100%" style="border:none; width:100%; height:100%; position:absolute; left:0px; top:0px; overflow:hidden;"></iframe>
                 </div>
             </div>
             <h3>Envelhecimento da Impressão</h3>
@@ -681,7 +681,7 @@
             <h2>Sobre o Autor</h2>
             <p class="divider"></p>
             <p>O Zelador é um especialista em técnicas avançadas de impressão e acabamento, com anos de experiência em manipulação de materiais e design gráfico. Este manual reflete seu compromisso em compartilhar conhecimento técnico de forma clara e profissional, voltado para aprendizes dedicados que buscam excelência.</p>
-            <p><strong></strong>:</p>
+            <p><strong>Contato</strong>: [Insira e-mail ou site, se desejar]</p>
             <p><strong>Agradecimentos</strong>: Aos leitores que abraçam o desafio de aprender com dedicação.</p>
             <p class="divider"></p>
             <p><strong>Fim do Linhas e Moedas</strong></p>
@@ -767,11 +767,41 @@
         });
         document.addEventListener('selectstart', e => e.preventDefault());
 
+        // Controle do vídeo
+        const videoIframe = document.getElementById('chapter-video-iframe');
+        
+        function playVideo() {
+            if (videoIframe) {
+                try {
+                    videoIframe.contentWindow.postMessage('playVideo', 'https://streamable.com');
+                    // Reiniciar vídeo (seek to 0)
+                    videoIframe.contentWindow.postMessage({ method: 'seekTo', value: 0 }, 'https://streamable.com');
+                } catch (e) {
+                    console.error('Erro ao reproduzir vídeo:', e);
+                }
+            }
+        }
+
+        function pauseVideo() {
+            if (videoIframe) {
+                try {
+                    videoIframe.contentWindow.postMessage('pauseVideo', 'https://streamable.com');
+                } catch (e) {
+                    console.error('Erro ao pausar vídeo:', e);
+                }
+            }
+        }
+
         // Navegação de páginas
         let currentPage = 1;
         const totalPages = 15;
 
         function showPage(pageNum) {
+            // Pausar vídeo se sair da página 8
+            if (currentPage === 8) {
+                pauseVideo();
+            }
+
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             const newPage = document.getElementById(`page-${pageNum}`);
             newPage.classList.add('active');
@@ -779,6 +809,11 @@
             currentPage = pageNum;
             newPage.scrollIntoView({ behavior: 'smooth', block: 'start' });
             playPageFlipSound();
+
+            // Reproduzir vídeo se entrar na página 8
+            if (pageNum === 8) {
+                playVideo();
+            }
         }
 
         function nextPage() {
